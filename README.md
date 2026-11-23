@@ -17,7 +17,7 @@ Keempat ilustrasi punya bentuk yang identik, hanya warnanya yang berbeda. Jadi g
 | | Ukuran |
 |---|---|
 | 4 JPG asli | 420 KB |
-| `index.html` (semua suasana + bulan + CSS + JS + demo) | 71 KB, **≈22 KB gzip** |
+| `index.html` (semua suasana + bulan + CSS + JS + demo) | 81 KB, **≈25 KB gzip** |
 
 ## Cara kerja animasi
 
@@ -30,7 +30,7 @@ Keempat ilustrasi punya bentuk yang identik, hanya warnanya yang berbeda. Jadi g
 
   Kecepatannya (hampir) konstan. Sabit bulan tetap tegak sepanjang lintasan.
 - **Bintang:** yang statis ada di layer malam, 5 bintang berkelip ada di layer kecil terpisah.
-- **Burung:** 3 siluet burung terbang dari kanan ke kiri sambil mengepakkan sayap, setiap kali halaman dimuat dan sebelum tiap pergantian suasana. Mereka juga di-mask ke langit (lewat di belakang kusen, tirai, dan gunung). Warnanya menyesuaikan suasana, dan kepakan sayapnya memakai `transform`, jadi tetap dijalankan GPU.
+- **Burung:** 3 siluet elang terbang dari kanan ke kiri, setiap kali halaman dimuat dan sebelum tiap pergantian suasana. Siluet dan kepakan sayapnya di-trace dari video referensi: 14 frame vektor dalam satu sprite (≈5 KB), diputar dengan `transform` + `steps()`, jadi tetap dijalankan GPU tanpa repaint. Tiap burung mengepak dengan tempo dan fase berbeda. Burung di-mask ke langit (lewat di belakang kusen, tirai, gunung), dan warnanya menyesuaikan suasana.
 - **Otomatis pause** saat hero di-scroll keluar layar atau tab tidak aktif.
 - **`prefers-reduced-motion`:** tampil statis, suasananya sesuai jam lokal pengunjung.
 - **Tanpa JS:** suasana malam tampil statis.
