@@ -17,11 +17,13 @@ Keempat ilustrasi punya bentuk yang identik, hanya warnanya yang berbeda. Jadi g
 | | Ukuran |
 |---|---|
 | 4 JPG asli | 420 KB |
-| `index.html` (semua suasana + bulan + CSS + JS + demo) | 81 KB, **≈25 KB gzip** |
+| `index.html` (semua suasana + bulan + burung + CSS + JS + demo) | 81 KB, **≈26 KB gzip** |
 
 ## Cara kerja animasi
 
-- **Transisi warna** = crossfade `opacity` antar layer suasana via Web Animations API. Animasi ini berjalan di compositor (GPU), bukan main thread, sehingga tidak ada repaint per frame.
+- **Transisi warna** = crossfade `opacity` antar layer suasana via Web Animations API, dengan kurva *ease-in-out sine* yang landai: transisi 9 detik, jeda diam hanya 3 detik, sehingga perubahan terasa mengalir. Animasi berjalan di compositor (GPU), tanpa repaint per frame.
+- **Warna ruangan mengikuti suasana di luar jendela.** Dinding, tirai, kusen, dan lantai diwarnai cahaya luar: biru tengah malam (malam), ungu-plum fajar (pagi), biru segar (siang), ungu-plum senja dengan rim light jingga (sore). Semua warna ruangan digeser dengan delta yang sama di ruang warna OKLab, jadi warnanya tetap bersih dan kontras lipatan tirai terjaga. Teks putih tetap kontras di semua suasana.
+- **Elemen pendukung ikut bergeser:** titik aksen dan latar teks di layar ponsel berubah warna sepanjang transisi, mulai bersamaan dengan crossfade.
 - **Hemat memori:** saat diam hanya 1 layer yang dirender; saat transisi maksimal 2 layer. Layer lain `display:none`.
 - **Bulan** adalah layer terpisah yang di-*mask* hanya ke area langit, sehingga bisa tertutup gunung, awan, dan kusen jendela. Lintasannya **setengah lingkaran dari kiri ke kanan**:
   - sore → malam: muncul dari balik gunung di kiri, lalu naik ke posisinya di gambar malam;
@@ -47,8 +49,8 @@ Salin tiga bagian dari `index.html`:
 
 | Opsi | Default | Keterangan |
 |---|---|---|
-| `data-hold` | `4000` | Lama tiap suasana diam (ms) |
-| `data-fade` | `6000` | Lama transisi (ms). Satu siklus = 4 × (hold + fade) = 40 detik |
+| `data-hold` | `3000` | Lama tiap suasana diam (ms) |
+| `data-fade` | `9000` | Lama transisi (ms). Satu siklus = 4 × (hold + fade) = 48 detik |
 | `data-fly` | `6000` | Lama burung melintasi jendela (ms), maksimal hold + fade |
 | `data-start="clock"` | – | Mulai dari suasana sesuai jam lokal (pagi 05–11, siang 11–15, sore 15–18, malam 18–05) |
 | `--dc-focus-x` | `.82` | Bagian gambar yang dipertahankan saat ter-crop horizontal (layar portrait). `.82` menjaga jendela di tengah |
