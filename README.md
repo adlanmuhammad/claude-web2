@@ -18,7 +18,7 @@ Keempat ilustrasi punya bentuk yang identik, hanya warnanya yang berbeda. Jadi g
 | | Ukuran |
 |---|---|
 | 4 JPG asli | 420 KB |
-| `index.html` (semua suasana + bulan + burung + CSS + JS + demo) | 75 KB, **≈24 KB gzip** |
+| `index.html` (semua suasana + bulan + burung + WebGL + CSS + JS + demo) | 85 KB, **≈28 KB gzip** |
 
 ## Struktur & cara kerja
 
@@ -34,13 +34,14 @@ Above the fold terdiri dari 3 lapisan:
    | Sore | 261 | 32% | 19% |
 
 2. **Tirai, kusen, dan jendela = 1 SVG statis** berwarna putih (atau hitam) dengan transparansi. Karena transparan, warnanya otomatis mengikuti warna tembok di belakangnya. Kusen sengaja dibuat sama dengan warna tembok.
-3. **Pemandangan di luar jendela = 1 layer SVG per suasana**, dipotong tepat di area kaca. Transisinya berupa crossfade `opacity` via Web Animations API dengan kurva *ease-in-out sine* (transisi 9 detik, diam 3 detik), dijalankan di GPU tanpa repaint per frame.
+3. **Pemandangan di luar jendela dirender WebGL.** Tiap suasana tetap digambar sebagai SVG, lalu dirender sekali menjadi tekstur GPU (ketajaman sesuai layar, maks 2× DPR). Saat transisi, shader mencampur warna tiap piksel di ruang warna **OKLab** (perseptual), jadi warna di tengah transisi tetap bersih, tidak keruh seperti crossfade biasa. Ada juga **gelombang cahaya**: saat fajar dan senja perubahan dimulai dari cakrawala lalu menyebar, sedangkan menuju siang dan malam langit berubah dari atas. Dithering menghilangkan *banding* pada gradasi gelap. GPU hanya bekerja selama transisi; saat diam tidak ada render sama sekali. Perangkat yang lambat otomatis menurunkan resolusi canvas selama transisi saja, lalu kembali tajam penuh. Kalau WebGL tidak tersedia (atau konteksnya hilang), halaman otomatis memakai crossfade SVG.
 
 **Batas bawah section = ujung bawah tirai** di semua ukuran layar. Tinggi gambar jendela+tirai selalu sama dengan tinggi hero (`100svh`). Di layar lebar gambar rata kanan dan sisa ruang di kiri adalah warna tembok. Di layar sempit gambar digeser agar jendela tetap di tengah (`--dc-focus-x`).
 
 Detail animasi:
 
-- **Hemat memori:** saat diam hanya 1 layer pemandangan yang dirender; saat transisi maksimal 2. Layer lain `display:none`.
+- **Hemat memori:** dengan WebGL, semua layer SVG pemandangan `display:none` dan hanya ada 1 canvas. Di mode fallback, saat diam hanya 1 layer yang dirender dan saat transisi maksimal 2.
+- **First paint tetap cepat:** scene malam (SVG) langsung tampil; WebGL disiapkan setelahnya dan mengambil alih tanpa kedipan.
 - **Bulan** adalah layer terpisah yang di-*mask* hanya ke area langit, sehingga bisa tertutup gunung, awan, dan kusen jendela. Lintasannya **setengah lingkaran dari kiri ke kanan**:
   - sore → malam: muncul dari balik gunung di kiri, lalu naik ke posisinya di gambar malam;
   - selama malam: terus bergerak pelan melintasi puncak busur;
@@ -84,6 +85,6 @@ Atribut `data-scene` di `.daycycle` juga ikut berubah, jadi bisa dipakai di CSS,
 
 ## Dukungan browser
 
-Memakai container query units, `svh`, `aspect-ratio`, `mask-image`, dan WAAPI `commitStyles`: Chrome/Edge 105+, Safari 16+, Firefox 110+. Untuk browser lama ada fallback ke `vw`/`vh`.
+Memakai WebGL 1 (dengan fallback otomatis ke SVG), `@property`, container query units, `svh`, `aspect-ratio`, `mask-image`, dan WAAPI `commitStyles`: Chrome/Edge 105+, Safari 16+, Firefox 110+. Untuk browser lama ada fallback ke `vw`/`vh`.
 
 Sudah diuji di Chromium pada ukuran desktop, laptop, tablet, ponsel portrait/landscape, dan ultrawide. Belum diuji langsung di Safari dan Firefox.
