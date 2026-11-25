@@ -24,7 +24,7 @@ Keempat ilustrasi punya bentuk yang identik, hanya warnanya yang berbeda. Jadi g
 
 Above the fold terdiri dari 3 lapisan:
 
-1. **Tembok = background hero (bukan SVG).** Warnanya `hsl(var(--dc-h) var(--dc-s) var(--dc-l))`. Saat suasana berganti, yang dianimasikan hanya tiga angka itu (hue, saturation, lightness). Angkanya didaftarkan dengan `@property` sehingga bertransisi sebagai angka.
+1. **Tembok digambar WebGL, satu shader dengan pemandangan.** Canvas WebGL selebar hero menggambar tembok dan pemandangan dalam satu clock, dengan interpolasi OKLab per piksel. Cahaya seolah masuk dari jendela: tembok dekat jendela berubah sedikit lebih dulu, dan sedikit setelah langit. Warnanya tetap token HSL yang sama (`data-walls`). Untuk first paint dan fallback tanpa WebGL, tembok memakai background CSS `hsl(var(--dc-h) var(--dc-s) var(--dc-l))`; transisi CSS-nya dimatikan saat WebGL aktif.
 
    | Suasana | `--dc-h` | `--dc-s` | `--dc-l` |
    |---|---|---|---|
